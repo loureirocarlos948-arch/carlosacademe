@@ -1,0 +1,979 @@
+
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escola Amílcar Cabral</title>
+
+<style>
+:root {
+  --azul: #2563eb;
+  --escuro: #14213d;
+  --fundo: #f3f6fb;
+  --branco: #ffffff;
+  --texto: #172033;
+  --cinza: #64748b;
+  --borda: #e2e8f0;
+  --verde: #16a34a;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--fundo);
+  color: var(--texto);
+}
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+.app { display: flex; min-height: 100vh; }
+
+.sidebar {
+  width: 250px;
+  background: var(--escuro);
+  color: white;
+  padding: 22px 14px;
+  flex-shrink: 0;
+}
+.brand {
+  padding: 10px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid #ffffff25;
+}
+.brand h2 { font-size: 17px; margin: 0 0 6px; }
+.brand small { color: #cbd5e1; }
+.menu { display: grid; gap: 7px; }
+.menu button {
+  border: 0;
+  border-radius: 8px;
+  padding: 13px;
+  background: transparent;
+  color: #dbeafe;
+  text-align: left;
+  width: 100%;
+}
+.menu button:hover, .menu button.active {
+  background: var(--azul);
+  color: white;
+}
+.main { flex: 1; min-width: 0; }
+.topbar {
+  background: white;
+  border-bottom: 1px solid var(--borda);
+  padding: 20px 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.topbar h2 { margin: 0; font-size: 21px; }
+.content { padding: 25px; }
+.page { display: none; }
+.page.active { display: block; }
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+.heading h3 { margin: 0 0 7px; font-size: 23px; }
+.heading p { margin: 0; color: var(--cinza); font-size: 13px; }
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+  margin-bottom: 22px;
+}
+.stat, .panel {
+  background: white;
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+}
+.stat { padding: 20px; }
+.stat span { color: var(--cinza); font-size: 13px; }
+.stat h3 { font-size: 29px; margin: 12px 0 0; }
+.panel { margin-bottom: 20px; overflow: hidden; }
+.panel-head {
+  padding: 17px 20px;
+  border-bottom: 1px solid var(--borda);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.panel-head h3 { margin: 0; font-size: 15px; }
+.panel-body { padding: 20px; }
+.btn {
+  padding: 11px 15px;
+  border: 0;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: bold;
+}
+.primary { background: var(--azul); color: white; }
+.secondary { background: #e2e8f0; color: #1e293b; }
+.danger { background: #fee2e2; color: #991b1b; }
+input, select {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: white;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+}
+.field { display: grid; gap: 7px; }
+.field label { font-size: 13px; font-weight: bold; }
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+.search { max-width: 300px; }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+th, td {
+  text-align: left;
+  padding: 13px 16px;
+  border-bottom: 1px solid #edf0f5;
+  font-size: 13px;
+}
+th {
+  background: #f8fafc;
+  color: var(--cinza);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+.badge {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 20px;
+  background: #dcfce7;
+  color: #166534;
+  font-size: 11px;
+}
+.badge.orange { background: #fef3c7; color: #92400e; }
+.badge.gray { background: #e2e8f0; color: #475569; }
+.actions { display: flex; gap: 6px; }
+.actions button {
+  border: 1px solid var(--borda);
+  background: white;
+  border-radius: 6px;
+  padding: 6px 9px;
+}
+.empty { text-align: center; padding: 25px; color: var(--cinza); }
+.quick-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.quick-grid button {
+  padding: 17px;
+  background: white;
+  border: 1px solid var(--borda);
+  border-radius: 9px;
+  text-align: left;
+}
+.quick-grid button:hover { border-color: var(--azul); }
+#toast {
+  display: none;
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  padding: 14px 20px;
+  color: white;
+  background: var(--escuro);
+  border-radius: 8px;
+  z-index: 99;
+}
+#studentFormPanel { display: none; }
+.mobile-toggle {
+  display: none;
+  padding: 8px;
+  background: white;
+  border: 1px solid var(--borda);
+  border-radius: 7px;
+}
+@media(max-width:900px) {
+  .stats { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media(max-width:650px) {
+  .sidebar {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    top: 0; bottom: 0; left: 0;
+    width: 250px;
+    overflow-y: auto;
+  }
+  .sidebar.open { display: block; }
+  .mobile-toggle { display: inline-block; }
+  .topbar { padding: 15px; gap: 10px; }
+  .topbar h2 { font-size: 17px; }
+  .content { padding: 15px; }
+  .stats { gap: 10px; }
+  .stat { padding: 14px; }
+  .stat h3 { font-size: 23px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .search { max-width: 100%; }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<aside class="sidebar" id="sidebar">
+  <div class="brand">
+    <h2>🎓 Escola Amílcar Cabral</h2>
+    <small>Sistema de Gestão Escolar</small>
+  </div>
+
+  <nav class="menu" id="menu">
+    <button class="active" data-page="dashboard">▦ Painel inicial</button>
+    <button data-page="students">♙ Alunos</button>
+    <button data-page="teachers">♧ Professores</button>
+    <button data-page="classes">▤ Turmas e cursos</button>
+    <button data-page="grades">✎ Notas e avaliações</button>
+    <button data-page="attendance">✓ Presenças</button>
+    <button data-page="payments">◇ Pagamentos</button>
+    <button data-page="reports">▥ Relatórios</button>
+    <button data-page="settings">⚙ Definições</button>
+  </nav>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <div style="display:flex;align-items:center;gap:12px">
+    <button class="mobile-toggle" id="menuToggle">☰</button>
+    <div>
+      <h2 id="pageTitle">Painel inicial</h2>
+      <small style="color:#64748b">Escola Amílcar Cabral / <span id="breadcrumb">Painel inicial</span></small>
+    </div>
+  </div>
+  <strong>Administrador</strong>
+</header>
+
+<div class="content">
+
+<!-- PAINEL -->
+<section class="page active" id="page-dashboard">
+  <div class="heading">
+    <div>
+      <h3>Bem-vindo à gestão escolar 👋</h3>
+      <p>Acompanhe as actividades da escola.</p>
+    </div>
+    <button class="btn primary" data-goto="students">+ Novo aluno</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><span>Total de alunos</span><h3 id="totalStudents">0</h3></div>
+    <div class="stat"><span>Professores</span><h3 id="totalTeachers">4</h3></div>
+    <div class="stat"><span>Turmas</span><h3>6</h3></div>
+    <div class="stat"><span>Pagamentos pendentes</span><h3 id="totalPending">0</h3></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head"><h3>Alunos registados recentemente</h3>
+      <button class="btn secondary" data-goto="students">Ver alunos</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Nome</th><th>Matrícula</th><th>Turma</th><th>Estado</th></tr></thead>
+        <tbody id="recentStudents"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head"><h3>Acesso rápido</h3></div>
+    <div class="panel-body quick-grid">
+      <button data-goto="students">👨‍🎓<br><br><strong>Registar aluno</strong></button>
+      <button data-goto="grades">📝<br><br><strong>Lançar notas</strong></button>
+      <button data-goto="attendance">✓<br><br><strong>Marcar presença</strong></button>
+      <button data-goto="payments">💳<br><br><strong>Registar pagamento</strong></button>
+    </div>
+  </div>
+</section>
+
+<!-- ALUNOS -->
+<section class="page" id="page-students">
+  <div class="heading">
+    <div><h3>Gestão de alunos</h3><p>Registar, pesquisar, editar e eliminar alunos.</p></div>
+    <button class="btn primary" id="newStudent">+ Novo aluno</button>
+  </div>
+
+  <div class="panel" id="studentFormPanel">
+    <div class="panel-head"><h3 id="formTitle">Registar aluno</h3>
+      <button class="btn secondary" id="closeForm">Fechar</button>
+    </div>
+    <div class="panel-body">
+      <form id="studentForm">
+        <input type="hidden" id="studentId">
+        <div class="form-grid">
+          <div class="field">
+            <label for="studentName">Nome completo *</label>
+            <input id="studentName" required maxlength="100">
+          </div>
+          <div class="field">
+            <label for="studentNumber">Número de matrícula *</label>
+            <input id="studentNumber" required maxlength="30">
+          </div>
+          <div class="field">
+            <label for="studentClass">Turma *</label>
+            <select id="studentClass" required>
+              <option value="">Seleccionar turma</option>
+              <option>7.ª Classe A</option>
+              <option>7.ª Classe B</option>
+              <option>8.ª Classe A</option>
+              <option>9.ª Classe A</option>
+              <option>10.ª Classe A</option>
+              <option>11.ª Classe B</option>
+              <option>12.ª Classe A</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="studentGender">Sexo</label>
+            <select id="studentGender">
+              <option>Não indicado</option>
+              <option>Masculino</option>
+              <option>Feminino</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="studentBirth">Data de nascimento</label>
+            <input id="studentBirth" type="date">
+          </div>
+          <div class="field">
+            <label for="studentGuardian">Encarregado de educação</label>
+            <input id="studentGuardian" maxlength="100">
+          </div>
+          <div class="field">
+            <label for="studentPhone">Telefone</label>
+            <input id="studentPhone" maxlength="30">
+          </div>
+          <div class="field">
+            <label for="studentStatus">Estado</label>
+            <select id="studentStatus">
+              <option>Activo</option>
+              <option>Pendente</option>
+              <option>Inactivo</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn secondary" id="cancelForm">Cancelar</button>
+          <button type="submit" class="btn primary">Guardar aluno</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <h3>Lista de alunos (<span id="studentCount">0</span>)</h3>
+      <input class="search" id="studentSearch" placeholder="Pesquisar aluno...">
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Nome</th><th>Matrícula</th><th>Turma</th><th>Encarregado</th><th>Estado</th><th>Acções</th></tr></thead>
+        <tbody id="studentsTable"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- PROFESSORES -->
+<section class="page" id="page-teachers">
+  <div class="heading"><div><h3>Professores</h3><p>Corpo docente da escola.</p></div></div>
+  <div class="panel">
+    <div class="panel-head"><h3>Lista de professores</h3></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Nome</th><th>Disciplina</th><th>Turmas</th><th>Estado</th></tr></thead>
+        <tbody>
+          <tr><td>Maria João</td><td>Matemática</td><td>7.ª a 9.ª</td><td><span class="badge">Activo</span></td></tr>
+          <tr><td>Pedro Manuel</td><td>Língua Portuguesa</td><td>7.ª a 12.ª</td><td><span class="badge">Activo</span></td></tr>
+          <tr><td>Ana Paula</td><td>Biologia</td><td>10.ª a 12.ª</td><td><span class="badge">Activo</span></td></tr>
+          <tr><td>José António</td><td>Física</td><td>10.ª a 12.ª</td><td><span class="badge">Activo</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <p>Os professores apresentados são exemplos. A gestão completa dos professores requer formulário e armazenamento próprios.</p>
+</section>
+
+<!-- TURMAS -->
+<section class="page" id="page-classes">
+  <div class="heading"><div><h3>Turmas e cursos</h3><p>Organização do ano lectivo 2026.</p></div></div>
+  <div class="panel">
+    <div class="panel-head"><h3>Turmas disponíveis</h3></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Turma</th><th>Classe</th><th>Turno</th><th>Sala</th></tr></thead>
+        <tbody>
+          <tr><td>7.ª Classe A</td><td>7.ª</td><td>Manhã</td><td>01</td></tr>
+          <tr><td>7.ª Classe B</td><td>7.ª</td><td>Tarde</td><td>02</td></tr>
+          <tr><td>8.ª Classe A</td><td>8.ª</td><td>Manhã</td><td>03</td></tr>
+          <tr><td>9.ª Classe A</td><td>9.ª</td><td>Tarde</td><td>04</td></tr>
+          <tr><td>10.ª Classe A</td><td>10.ª</td><td>Manhã</td><td>05</td></tr>
+          <tr><td>11.ª Classe B</td><td>11.ª</td><td>Tarde</td><td>06</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- NOTAS -->
+<section class="page" id="page-grades">
+  <div class="heading"><div><h3>Notas e avaliações</h3><p>Registar avaliações dos alunos.</p></div></div>
+  <div class="panel">
+    <div class="panel-head"><h3>Nova avaliação</h3></div>
+    <div class="panel-body">
+      <form id="gradeForm">
+        <div class="form-grid">
+          <div class="field"><label for="gradeName">Nome do aluno</label><input id="gradeName" required></div>
+          <div class="field"><label for="gradeSubject">Disciplina</label>
+            <select id="gradeSubject"><option>Matemática</option><option>Língua Portuguesa</option><option>Biologia</option><option>Física</option><option>Química</option><option>História</option></select>
+          </div>
+          <div class="field"><label for="gradeTerm">Trimestre</label>
+            <select id="gradeTerm"><option>1.º Trimestre</option><option>2.º Trimestre</option><option>3.º Trimestre</option></select>
+          </div>
+          <div class="field"><label for="gradeScore">Nota (0–20)</label><input id="gradeScore" type="number" min="0" max="20" step="0.1" required></div>
+        </div>
+        <div class="form-actions"><button class="btn primary">Guardar avaliação</button></div>
+      </form>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h3>Avaliações registadas</h3></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Aluno</th><th>Disciplina</th><th>Trimestre</th><th>Nota</th><th>Resultado</th></tr></thead>
+      <tbody id="gradesTable"><tr><td colspan="5" class="empty">Sem avaliações registadas.</td></tr></tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- PRESENÇAS -->
+<section class="page" id="page-attendance">
+  <div class="heading"><div><h3>Presenças</h3><p>Controlo de assiduidade dos alunos.</p></div></div>
+  <div class="panel">
+    <div class="panel-head"><h3>Marcar presença</h3></div>
+    <div class="panel-body">
+      <form id="attendanceForm">
+        <div class="form-grid">
+          <div class="field"><label for="attendanceName">Nome do aluno</label><input id="attendanceName" required></div>
+          <div class="field"><label for="attendanceDate">Data</label><input id="attendanceDate" type="date" required></div>
+          <div class="field"><label for="attendanceStatus">Situação</label>
+            <select id="attendanceStatus"><option>Presente</option><option>Falta</option><option>Atraso</option><option>Justificada</option></select>
+          </div>
+        </div>
+        <div class="form-actions"><button class="btn primary">Guardar presença</button></div>
+      </form>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h3>Registos de presença</h3></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Aluno</th><th>Data</th><th>Situação</th></tr></thead>
+      <tbody id="attendanceTable"><tr><td colspan="3" class="empty">Sem registos.</td></tr></tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- PAGAMENTOS -->
+<section class="page" id="page-payments">
+  <div class="heading"><div><h3>Pagamentos e propinas</h3><p>Registar pagamentos em kwanzas.</p></div></div>
+  <div class="panel">
+    <div class="panel-head"><h3>Registar pagamento</h3></div>
+    <div class="panel-body">
+      <form id="paymentForm">
+        <div class="form-grid">
+          <div class="field"><label for="paymentName">Nome do aluno</label><input id="paymentName" required></div>
+          <div class="field"><label for="paymentAmount">Valor (Kz)</label><input id="paymentAmount" type="number" min="1" required></div>
+          <div class="field"><label for="paymentMonth">Mês</label>
+            <select id="paymentMonth">
+              <option>Janeiro</option><option>Fevereiro</option><option>Março</option>
+              <option>Abril</option><option>Maio</option><option>Junho</option>
+              <option>Julho</option><option>Agosto</option><option>Setembro</option>
+              <option>Outubro</option><option>Novembro</option><option>Dezembro</option>
+            </select>
+          </div>
+          <div class="field"><label for="paymentStatus">Situação</label>
+            <select id="paymentStatus"><option>Pago</option><option>Pendente</option></select>
+          </div>
+        </div>
+        <div class="form-actions"><button class="btn primary">Guardar pagamento</button></div>
+      </form>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><h3>Histórico de pagamentos</h3></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Aluno</th><th>Mês</th><th>Valor</th><th>Situação</th></tr></thead>
+      <tbody id="paymentsTable"><tr><td colspan="4" class="empty">Sem pagamentos registados.</td></tr></tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- RELATÓRIOS -->
+<section class="page" id="page-reports">
+  <div class="heading"><div><h3>Relatórios</h3><p>Exportação e impressão de dados.</p></div></div>
+  <div class="panel">
+    <div class="panel-body">
+      <h3>Relatório de alunos</h3>
+      <p>Exporta a lista de alunos para um ficheiro CSV.</p>
+      <button class="btn primary" id="exportStudents">Exportar alunos CSV</button>
+      <hr style="border:0;border-top:1px solid #e2e8f0;margin:25px 0">
+      <h3>Relatório de pagamentos</h3>
+      <p>Exporta os pagamentos registados durante esta sessão.</p>
+      <button class="btn primary" id="exportPayments">Exportar pagamentos CSV</button>
+      <hr style="border:0;border-top:1px solid #e2e8f0;margin:25px 0">
+      <button class="btn secondary" id="printReport">Imprimir página</button>
+    </div>
+  </div>
+</section>
+
+<!-- DEFINIÇÕES -->
+<section class="page" id="page-settings">
+  <div class="heading"><div><h3>Definições</h3><p>Informações da instituição escolar.</p></div></div>
+  <div class="panel">
+    <div class="panel-head"><h3>Dados da escola</h3></div>
+    <div class="panel-body">
+      <form id="settingsForm">
+        <div class="form-grid">
+          <div class="field"><label for="schoolName">Nome da escola</label><input id="schoolName" value="Escola Amílcar Cabral"></div>
+          <div class="field"><label for="schoolYear">Ano lectivo</label><input id="schoolYear" value="2026"></div>
+          <div class="field"><label for="schoolCountry">País</label><input id="schoolCountry" value="Angola"></div>
+          <div class="field"><label for="schoolCurrency">Moeda</label><input id="schoolCurrency" value="Kwanza (Kz)"></div>
+        </div>
+        <div class="form-actions"><button class="btn primary">Guardar definições</button></div>
+      </form>
+    </div>
+  </div>
+  <div class="panel"><div class="panel-body">
+    <strong>Informação técnica</strong>
+    <p>Esta versão utiliza o armazenamento local do navegador para os alunos e definições. As notas, presenças e pagamentos são mantidos apenas durante a sessão. Para guardar todos os dados de forma permanente e partilhá-los entre computadores, será necessário ligar o sistema a PHP e MySQL.</p>
+  </div></div>
+</section>
+
+</div>
+</main>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+
+const pageTitles = {
+  dashboard: "Painel inicial",
+  students: "Alunos",
+  teachers: "Professores",
+  classes: "Turmas e cursos",
+  grades: "Notas e avaliações",
+  attendance: "Presenças",
+  payments: "Pagamentos",
+  reports: "Relatórios",
+  settings: "Definições"
+};
+
+let students = [];
+let grades = [];
+let attendances = [];
+let payments = [];
+
+try {
+  students = JSON.parse(localStorage.getItem("ac_students") || "[]");
+  if (!Array.isArray(students)) students = [];
+} catch (error) {
+  students = [];
+}
+
+function notify(message) {
+  const box = $("toast");
+  box.textContent = message;
+  box.style.display = "block";
+  clearTimeout(notify.timer);
+  notify.timer = setTimeout(() => {
+    box.style.display = "none";
+  }, 2500);
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, character => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[character]);
+}
+
+function saveStudents() {
+  try {
+    localStorage.setItem("ac_students", JSON.stringify(students));
+  } catch (error) {
+    notify("Não foi possível guardar os dados no navegador.");
+  }
+}
+
+function badge(status) {
+  let className = "";
+  if (status === "Pendente" || status === "Falta" || status === "Atraso") {
+    className = "orange";
+  } else if (status === "Inactivo" || status === "Reprovado") {
+    className = "gray";
+  }
+  return `<span class="badge ${className}">${escapeHTML(status)}</span>`;
+}
+
+/* NAVEGAÇÃO DOS MENUS */
+function openPage(name) {
+  if (!pageTitles[name]) return;
+
+  document.querySelectorAll(".page").forEach(page => {
+    page.classList.remove("active");
+  });
+
+  const page = $("page-" + name);
+  if (page) page.classList.add("active");
+
+  document.querySelectorAll("#menu button[data-page]").forEach(button => {
+    button.classList.toggle("active", button.dataset.page === name);
+  });
+
+  $("pageTitle").textContent = pageTitles[name];
+  $("breadcrumb").textContent = pageTitles[name];
+  $("sidebar").classList.remove("open");
+
+  if (name === "students") renderStudents();
+  if (name === "dashboard") renderDashboard();
+}
+
+$("menu").addEventListener("click", event => {
+  const button = event.target.closest("button[data-page]");
+  if (button) openPage(button.dataset.page);
+});
+
+document.addEventListener("click", event => {
+  const button = event.target.closest("[data-goto]");
+  if (button) openPage(button.dataset.goto);
+});
+
+$("menuToggle").addEventListener("click", () => {
+  $("sidebar").classList.toggle("open");
+});
+
+/* ALUNOS */
+function renderStudents() {
+  const search = $("studentSearch").value.trim().toLowerCase();
+
+  const filtered = students.filter(student =>
+    [student.name, student.number, student.className, student.guardian]
+      .some(value => String(value || "").toLowerCase().includes(search))
+  );
+
+  $("studentCount").textContent = filtered.length;
+
+  if (!filtered.length) {
+    $("studentsTable").innerHTML =
+      '<tr><td colspan="6" class="empty">Nenhum aluno encontrado.</td></tr>';
+    return;
+  }
+
+  $("studentsTable").innerHTML = filtered.map(student => `
+    <tr>
+      <td>${escapeHTML(student.name)}</td>
+      <td>${escapeHTML(student.number)}</td>
+      <td>${escapeHTML(student.className)}</td>
+      <td>${escapeHTML(student.guardian || "—")}</td>
+      <td>${badge(student.status)}</td>
+      <td class="actions">
+        <button data-edit="${escapeHTML(student.id)}" title="Editar">Editar</button>
+        <button data-delete="${escapeHTML(student.id)}" title="Eliminar">Eliminar</button>
+      </td>
+    </tr>
+  `).join("");
+}
+
+function renderDashboard() {
+  $("totalStudents").textContent = students.length;
+  $("totalPending").textContent =
+    payments.filter(payment => payment.status === "Pendente").length;
+
+  const recent = students.slice().reverse().slice(0, 5);
+
+  $("recentStudents").innerHTML = recent.length
+    ? recent.map(student => `
+      <tr>
+        <td>${escapeHTML(student.name)}</td>
+        <td>${escapeHTML(student.number)}</td>
+        <td>${escapeHTML(student.className)}</td>
+        <td>${badge(student.status)}</td>
+      </tr>
+    `).join("")
+    : '<tr><td colspan="4" class="empty">Ainda não há alunos registados.</td></tr>';
+}
+
+function showStudentForm(student = null) {
+  $("studentForm").reset();
+  $("studentId").value = student ? student.id : "";
+  $("formTitle").textContent = student ? "Editar aluno" : "Registar aluno";
+
+  if (student) {
+    $("studentName").value = student.name;
+    $("studentNumber").value = student.number;
+    $("studentClass").value = student.className;
+    $("studentGender").value = student.gender || "Não indicado";
+    $("studentBirth").value = student.birth || "";
+    $("studentGuardian").value = student.guardian || "";
+    $("studentPhone").value = student.phone || "";
+    $("studentStatus").value = student.status || "Activo";
+  }
+
+  $("studentFormPanel").style.display = "block";
+  $("studentFormPanel").scrollIntoView({ behavior: "smooth" });
+}
+
+function closeStudentForm() {
+  $("studentFormPanel").style.display = "none";
+  $("studentForm").reset();
+  $("studentId").value = "";
+}
+
+$("newStudent").addEventListener("click", () => showStudentForm());
+$("closeForm").addEventListener("click", closeStudentForm);
+$("cancelForm").addEventListener("click", closeStudentForm);
+$("studentSearch").addEventListener("input", renderStudents);
+
+$("studentForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const id = $("studentId").value;
+  const student = {
+    id: id || String(Date.now()),
+    name: $("studentName").value.trim(),
+    number: $("studentNumber").value.trim(),
+    className: $("studentClass").value,
+    gender: $("studentGender").value,
+    birth: $("studentBirth").value,
+    guardian: $("studentGuardian").value.trim(),
+    phone: $("studentPhone").value.trim(),
+    status: $("studentStatus").value
+  };
+
+  const duplicate = students.some(item =>
+    item.number.toLowerCase() === student.number.toLowerCase() &&
+    item.id !== id
+  );
+
+  if (duplicate) {
+    notify("Esse número de matrícula já existe.");
+    return;
+  }
+
+  if (id) {
+    students = students.map(item => item.id === id ? student : item);
+  } else {
+    students.push(student);
+  }
+
+  saveStudents();
+  closeStudentForm();
+  renderStudents();
+  renderDashboard();
+  notify(id ? "Aluno actualizado!" : "Aluno registado com sucesso!");
+});
+
+$("studentsTable").addEventListener("click", event => {
+  const editButton = event.target.closest("[data-edit]");
+  const deleteButton = event.target.closest("[data-delete]");
+
+  if (editButton) {
+    const student = students.find(item => item.id === editButton.dataset.edit);
+    if (student) showStudentForm(student);
+  }
+
+  if (deleteButton) {
+    const student = students.find(item => item.id === deleteButton.dataset.delete);
+
+    if (student && confirm("Eliminar o aluno " + student.name + "?")) {
+      students = students.filter(item => item.id !== student.id);
+      saveStudents();
+      renderStudents();
+      renderDashboard();
+      notify("Aluno eliminado.");
+    }
+  }
+});
+
+/* NOTAS */
+$("gradeForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const score = Number($("gradeScore").value);
+  if (score < 0 || score > 20) {
+    notify("A nota deve estar entre 0 e 20.");
+    return;
+  }
+
+  grades.unshift({
+    name: $("gradeName").value.trim(),
+    subject: $("gradeSubject").value,
+    term: $("gradeTerm").value,
+    score,
+    result: score >= 10 ? "Aprovado" : "Reprovado"
+  });
+
+  $("gradesTable").innerHTML = grades.map(grade => `
+    <tr>
+      <td>${escapeHTML(grade.name)}</td>
+      <td>${escapeHTML(grade.subject)}</td>
+      <td>${escapeHTML(grade.term)}</td>
+      <td>${grade.score}</td>
+      <td>${badge(grade.result)}</td>
+    </tr>
+  `).join("");
+
+  event.target.reset();
+  notify("Avaliação registada.");
+});
+
+/* PRESENÇAS */
+$("attendanceDate").value = new Date().toISOString().slice(0, 10);
+
+$("attendanceForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  attendances.unshift({
+    name: $("attendanceName").value.trim(),
+    date: $("attendanceDate").value,
+    status: $("attendanceStatus").value
+  });
+
+  $("attendanceTable").innerHTML = attendances.map(item => `
+    <tr>
+      <td>${escapeHTML(item.name)}</td>
+      <td>${escapeHTML(item.date)}</td>
+      <td>${badge(item.status)}</td>
+    </tr>
+  `).join("");
+
+  event.target.reset();
+  $("attendanceDate").value = new Date().toISOString().slice(0, 10);
+  notify("Presença registada.");
+});
+
+/* PAGAMENTOS */
+$("paymentForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  payments.unshift({
+    name: $("paymentName").value.trim(),
+    amount: Number($("paymentAmount").value),
+    month: $("paymentMonth").value,
+    status: $("paymentStatus").value
+  });
+
+  $("paymentsTable").innerHTML = payments.map(payment => `
+    <tr>
+      <td>${escapeHTML(payment.name)}</td>
+      <td>${escapeHTML(payment.month)}</td>
+      <td>${payment.amount.toLocaleString("pt-AO")} Kz</td>
+      <td>${badge(payment.status)}</td>
+    </tr>
+  `).join("");
+
+  event.target.reset();
+  renderDashboard();
+  notify("Pagamento registado.");
+});
+
+/* EXPORTAR CSV */
+function downloadCSV(filename, rows) {
+  const content = rows.map(row =>
+    row.map(value =>
+      '"' + String(value ?? "").replace(/"/g, '""') + '"'
+    ).join(";")
+  ).join("\r\n");
+
+  const blob = new Blob(["\uFEFF" + content], {
+    type: "text/csv;charset=utf-8;"
+  });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+$("exportStudents").addEventListener("click", () => {
+  if (!students.length) {
+    notify("Não há alunos para exportar.");
+    return;
+  }
+
+  downloadCSV("alunos.csv", [
+    ["Nome", "Matrícula", "Turma", "Sexo", "Nascimento",
+     "Encarregado", "Telefone", "Estado"],
+    ...students.map(student => [
+      student.name, student.number, student.className,
+      student.gender, student.birth, student.guardian,
+      student.phone, student.status
+    ])
+  ]);
+});
+
+$("exportPayments").addEventListener("click", () => {
+  if (!payments.length) {
+    notify("Não há pagamentos para exportar nesta sessão.");
+    return;
+  }
+
+  downloadCSV("pagamentos.csv", [
+    ["Aluno", "Mês", "Valor Kz", "Situação"],
+    ...payments.map(payment => [
+      payment.name, payment.month, payment.amount, payment.status
+    ])
+  ]);
+});
+
+$("printReport").addEventListener("click", () => window.print());
+
+/* DEFINIÇÕES */
+$("settingsForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const settings = {
+    name: $("schoolName").value,
+    year: $("schoolYear").value,
+    country: $("schoolCountry").value,
+    currency: $("schoolCurrency").value
+  };
+
+  try {
+    localStorage.setItem("ac_settings", JSON.stringify(settings));
+    notify("Definições guardadas.");
+  } catch (error) {
+    notify("Não foi possível guardar as definições.");
+  }
+});
+
+/* INICIALIZAÇÃO */
+renderStudents();
+renderDashboard();
+</script>
+</body>
+</html>
